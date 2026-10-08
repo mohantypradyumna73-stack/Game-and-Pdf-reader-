@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Utility Hub</title>
+    <style>
+        /* Base Setup */
+        body { font-family: Arial, sans-serif; margin: 0; padding: 0; background: #f4f4f9; user-select: none; }
+        .hidden { display: none !important; }
+        
+        /* Top Navigation for Cover Switching */
+        .app-switcher { background: #333; padding: 10px; display: flex; justify-content: space-between; align-items: center; color: white; font-size: 0.8em; }
+        .switch-btn { background: #555; border: none; color: white; padding: 5px 10px; border-radius: 3px; cursor: pointer; }
+
+        /* COVER 1: TIC-TAC-TOE GAME */
+        .game-container { max-width: 300px; margin: 40px auto; text-align: center; }
+        .board { display: grid; grid-template-columns: repeat(3, 100px); grid-gap: 5px; margin-top: 20px; }
+        .cell { width: 100px; height: 100px; background: white; border: 2px solid #333; font-size: 2em; display: flex; align-items: center; justify-content: center; cursor: pointer; font-weight: bold; }
+
+        /* COVER 2: REAL DOCUMENT READER */
+        .pdf-container { padding: 20px; max-width: 600px; margin: 0 auto; }
+        .doc-box { background: white; padding: 20px; border: 1px solid #ccc; border-radius: 5px; min-height: 200px; margin-top: 15px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
+        .file-input-label { display: inline-block; background: #0066cc; color: white; padding: 10px 15px; border-radius: 4px; cursor: pointer; margin-bottom: 10px; }
+
+        /* SECRET CHAT INTERFACE */
+        .chat-container { display: flex; flex-direction: column; height: 100vh; background: #e5ddd5; }
+        .chat-header { background: #075e54; color: white; padding: 15px; display: flex; justify-content: space-between; font-weight: bold; }
+        .room-selectors { display: flex; background: #128c7e; padding: 5px; }
+        .room-btn { flex: 1; padding: 10px; background: none; border: none; color: white; font-weight: bold; cursor: pointer; }
+        .room-btn.active { background: #075e54; }
+        .message-area { flex: 1; padding: 20px; overflow-y: auto; display: flex; flex-direction: column; }
+        .message { background: white; padding: 10px; border-radius: 8px; margin-bottom: 10px; max-width: 70%; word-wrap: break-word; }
+        .chat-input-area { display: flex; padding: 10px; background: #f0f0f0; }
+        .chat-input-area input { flex: 1; padding: 10px; border: 1px solid #ccc; border-radius: 20px; margin-right: 10px; }
+        .chat-input-area button { background: #075e54; color: white; border: none; padding: 10px 20px; border-radius: 20px; cursor: pointer; }
+
+        /* General Disclaimer */
+        .disclaimer-box { margin-top: 30px; padding: 12px; background: #fff; border-left: 4px solid #cc0000; font-size: 0.85em; text-align: left; color: #555; }
+    </style>
+</head>
+<body>
+
+    <!-- MASTER WRAPPER FOR CAMOUFLAGE MODES -->
+    <div id="camouflage-view">
+        <!-- Hidden Switcher Panel -->
+        <div class="app-switcher">
+            <span id="secret-trigger-zone">⚙️ System Tools v1.2</span>
+            <button class="switch-btn" onclick="toggleCoverMode()">Change App View</button>
+        </div>
+
+        <!-- MODE A: ACTIVE GAME -->
+        <div id="game-mode" class="game-container">
+            <h3>Tic-Tac-Toe</h3>
+            <div id="game-status">Player X's turn</div>
+            <div class="board" onclick="handleGameClick(event)">
+                <div class="cell" data-index="0"></div>
+                <div class="cell" data-index="1"></div>
+                <div class="cell" data-index="2"></div>
+                <div class="cell" data-index="3"></div>
+                <div class="cell" data-index="4"></div>
+                <div class="cell" data-index="5"></div>
+                <div class="cell" data-index="6"></div>
+                <div class="cell" data-index="7"></div>
+                <div class="cell" data-index="8"></div>
+            </div>
+            <br><button onclick="resetGame()" style="padding: 8px 15px;">Restart Game</button>
+        </div>
+
+        <!-- MODE B: REAL TEXT / DOC READER -->
+        <div id="pdf-mode" class="pdf-container hidden">
+            <h3>Local Document Viewer</h3>
+            <label class="file-input-label">
+                📁 Select Text or PDF File
+                <input type="file" id="file-loader" accept=".txt,.pdf" style="display: none;" onchange="loadLocalFile(event)">
+            </label>
+            <div class="doc-box" id="doc-render-area">
+                <em>No document loaded. Select a file to view its contents layout.</em>
+            </div>
+        </div>
+
+        <!-- Anti-Misuse Disclaimer (Always Visible on Cover for safety compliance) -->
+        <div style="max-width: 500px; margin: 20px auto; padding: 0 15px;">
+            <div class="disclaimer-box">
+                <strong>Safety Notice:</strong> This application is created strictly for privacy and personal communication. It is <strong>not made for harming, blackmailing, or misuse purposes</strong>. If this application causes harm or is misused by anyone, feel free to report via email to <strong>mohantypradyumna73@gmail.com</strong> so I, Pradyumna, can delete it.
+            </div>
+        </div>
+    </div>
+
+    <!-- MAIN HIDDEN CHAT SYSTEM -->
+    <div id="chat-view" class="chat-container hidden">
+        <div class="chat-header">
+            <span id="current-room-title">Friends Room</span>
+            <button onclick="lockApp()" style="background:none; border:none; color:white; font-size:1.2em; cursor:pointer;">🔒 Exit</button>
+        </div>
+        
+        <div class="room-selectors">
+            <button class="room-btn active" id="btn-friends" onclick="switchRoom('Friends')">Friends</button>
+            <button class="room-btn" id="btn-cousins" onclick="switchRoom('Cousins')">Cousins</button>
+        </div>
+
+        <div class="message-area" id="messages-display"></div>
+
+        <div class="chat-input-area">
+            <input type="text" id="chat-message-input" placeholder="Type secret message...">
+            <button onclick="executeSendMessage()">Send</button>
+        </div>
+    </div>
+
+    <script>
+        // --- DUAL CAMOUFLAGE SWITCH LOGIC ---
+        let currentCover = 'game'; 
+        function toggleCoverMode() {
+            if (currentCover === 'game') {
+                document.getElementById('game-mode').classList.add('hidden');
+                document.getElementById('pdf-mode').classList.remove('hidden');
+                currentCover = 'pdf';
+            } else {
+                document.getElementById('pdf-mode').classList.add('hidden');
+                document.getElementById('game-mode').classList.remove('hidden');
+                currentCover = 'game';
+            }
+        }
+
+        // --- ACTUAL FUNCTIONAL GAME LOGIC ---
+        let boardState = ["", "", "", "", "", "", "", "", ""];
+        let activePlayer = "X";
+        function handleGameClick(e) {
+            const index = e.target.getAttribute('data-index');
+            if (!index || boardState[index] !== "") return;
+            boardState[index] = activePlayer;
+            e.target.innerText = activePlayer;
+            activePlayer = activePlayer === "X" ? "O" : "X";
+            document.getElementById('game-status').innerText = `Player ${activePlayer}'s turn`;
+        }
+        function resetGame() {
+            boardState = ["", "", "", "", "", "", "", "", ""];
+            document.querySelectorAll('.cell').forEach(c => c.innerText = "");
+            activePlayer = "X";
+            document.getElementById('game-status').innerText = "Player X's turn";
+        }
+
+        // --- ACTUAL FUNCTIONAL FILE READER LOGIC ---
+        function loadLocalFile(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                // If it's a standard text file it reads it perfectly; if it's a PDF it provides structural mock-up text
+                if (file.name.endsWith('.pdf')) {
+                    document.getElementById('doc-render-area').innerText = `[PDF Render Core]\nDocument: ${file.name}\nSize: ${(file.size/1024).toFixed(1)} KB\n\nRendering text layers securely...`;
+                } else {
+                    document.getElementById('doc-render-area').innerText = e.target.result;
+                }
+            };
+            reader.readAsText(file);
+        }
+
+        // --- UNLOCK SYSTEM (Tap the top text "⚙️ System Tools v1.2" 5 times) ---
+        let masterClicks = 0;
+        document.getElementById('secret-trigger-zone').addEventListener('click', () => {
+            masterClicks++;
+            if (masterClicks === 5) {
+                document.getElementById('camouflage-view').classList.add('hidden');
+                document.getElementById('chat-view').classList.remove('hidden');
+                masterClicks = 0;
+                renderRoomMessages();
+            }
+        });
+
+        function lockApp() {
+            document.getElementById('chat-view').classList.add('hidden');
+            document.getElementById('camouflage-view').classList.remove('hidden');
+        }
+
+        // --- ISOLATED MESSAGE SEGREGATION ---
+        let structuralRoom = 'Friends';
+        const localizedDatabase = {
+            Friends: [{text: "System: Secure Friends Circle active.", sys: true}],
+            Cousins: [{text: "System: Secure Cousins Circle active.", sys: true}]
+        };
+
+        function switchRoom(targetRoom) {
+            structuralRoom = targetRoom;
+            document.getElementById('current-room-title').innerText = targetRoom + " Room";
+            
+            document.getElementById('btn-friends').classList.remove('active');
+            document.getElementById('btn-cousins').classList.remove('active');
